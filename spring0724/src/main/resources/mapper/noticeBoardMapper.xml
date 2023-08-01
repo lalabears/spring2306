@@ -1,0 +1,79 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.mapper.NoticeBoardMapper">
+	<insert id="insertNoticeBoard">
+		insert into NOTICEBOARD values(nb_seq.nextval, #{nid}, #{nbtitle},#{nbcontent},sysdate, 0,0,0,0,#{nbfile})
+	</insert>
+	
+	<select id ="selectListAllCount" resultType="int">
+		select count(*) from NOTICEBOARD
+	</select>
+	
+	<select id ="selectAll" resultType="com.java.dto.NoticeBoardDto">
+		select * from noticeboard where  
+		 <![CDATA[
+		nbno >= #{startRow} and nbno <= #{endRow} order by nbno asc
+		 ]]>
+	</select>
+	   <!-- 게시글 조회수 1증가 -->
+   <update id="updateBhitUp">
+        update noticeboard set nbhit=nbhit+1 where nbno=#{nbno}
+   </update>
+   
+   
+   <select id ="selectOne" resultType="com.java.dto.NoticeBoardDto">
+		select * from noticeboard where nbno=#{nbno}
+	</select>
+   <select id ="selectPrevOne" resultType="com.java.dto.NoticeBoardDto">
+		select * from noticeboard where nbno=
+		(select prevDto from
+		(select nbno,lag(nbno,1,-1) over(order by nbno asc) as prevDto
+		from noticeboard order by nbno asc) where nbno=#{nbno})
+	</select>
+   <select id ="selectNextOne" resultType="com.java.dto.NoticeBoardDto">
+		select * from noticeboard where nbno=
+		(select nextDto from
+		(select nbno,lead(nbno,1,-1) over(order by nbno asc) as nextDto
+		from noticeboard order by nbno asc) where nbno=#{nbno})
+	</select>
+	
+	<delete id="deleteOne">
+      delete from noticeboard where nbno=#{nbno}
+   </delete>
+   
+   <update id="insertUpdate">
+   	  update NOTICEBOARD set nbtitle =#{nbtitle}, nbcontent=#{nbcontent}, nbfile =#{nbfile} where nbno= #{nbno}     
+   </update>
+   
+ <!--   <update id="updateNbcate">
+   	  update NOTICEBOARD set nbcate =#{nbcate} where nbno= #{nbno}     
+   </update> -->
+   
+   <insert id="insertComment">
+ 	  insert into commentfqa values(c_seq.nextval, #{bno}, #{id} ,'1234',#{ccontent}, sysdate)
+   
+   
+   </insert>
+   <select id="selectComment" resultType="com.java.dto.CommentDto">
+   	  select * from commentfqa where bno = #{bno}
+   
+   </select>
+	
+	<delete id="deleteComment">
+      delete from commentfqa where bno=#{bno}
+   </delete>
+   
+   <update id="updateComment">
+   	  update commentfqa set ccontent=#{ccontent}, cdate =sysdate where bno=#{bno} 
+   </update>
+	
+	
+	
+	
+   
+   
+   
+   
+</mapper>

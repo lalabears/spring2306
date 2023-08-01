@@ -1,0 +1,18 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.mapper.MemberMapper">
+	<!-- 로그인 확인 -->
+	<select id="selectLogin" resultType="com.java.dto.MemberDto">
+		select * from cjuser where userid=#{userid} and upw=#{upw}
+	</select>
+	<select id="selectId" resultType="com.java.dto.MemberDto">
+		select * from cjuser where userid=#{userid}
+	</select>
+	<insert id="insertMember">
+		insert into cjuser values (cju_seq.nextval, #{uname}, #{upw}, #{uemail}, 
+		#{uaddr},#{uphone}, #{ubirth}, sysdate, #{ugender},#{ugetnews},#{ugetsms},
+		#{ujob},#{usingle},#{uinterest},#{userid})
+	</insert>
+</mapper>
