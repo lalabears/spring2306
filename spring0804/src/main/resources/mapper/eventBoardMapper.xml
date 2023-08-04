@@ -1,0 +1,36 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.mapper.EventBoardMapper">
+
+	<select id="selectAllEventBoard">
+		select * from ( select rownum rnum,a.* from
+		(select b.*,sysdate-ebdate remainDate from eventboard b order by ebgroup desc, ebstep asc) a
+		)where rnum between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="selectListCount" resultType="int">
+        select count(*) from eventboard
+   	</select>
+   	
+    <select id="selectOneEventBoard">
+   		select * from eventboard where ebno=#{ebno}
+    </select>
+    
+    <select id ="selectPrevEventBoard" resultType="com.java.dto.EventBoardDto">
+		select * from eventboard where ebno=
+		(select prevDto from
+		(select ebno,lag(ebno,1,-1) over(order by ebno asc) as prevDto
+		from eventboard order by ebno asc) where ebno=#{ebno})
+	</select>
+   <select id ="selectNextEventBoard" resultType="com.java.dto.EventBoardDto">
+		select * from eventboard where ebno=
+		(select nextDto from
+		(select ebno,lead(ebno,1,-1) over(order by ebno asc) as nextDto
+		from eventboard order by ebno asc) where ebno=#{ebno})
+	</select>
+	
+	
+	
+</mapper>
